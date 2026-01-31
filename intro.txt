@@ -1,0 +1,31 @@
+System Design is the process of defining the architecture, components, modules, interfaces, and data for a system to satisfy specified requirements.
+1. What: It defines the structural "skeleton." This involves choosing the right components—such as web servers, API gateways, databases, and caches—and deciding how they will be organized.
+2. How: ystem design dictates how data flows from point A to point B, whether that’s through synchronous REST calls or asynchronous message queues like Kafka.
+3. The constraints: Scalability(Can it handle more load?), Availability(Is it always online?), Reliability(Does it work correctly under pressure?), Maintainability(Can other engineers fix it later?).
+
+Building Blocks:
+1. Database: Relational (SQL) vs Non-Relationsal (No SQL)
+2. Caching
+3. Database Sharding: Splitting a giant database into smaller, faster chunks.
+4. Replication: Copying data across servers so it's never lost.
+5. Proxies: Forward vs. Reverse proxies (like Nginx).
+6. APIs: REST, GraphQL, and gRPC.
+7. Message Queues: Asynchronous communication (e.g., Kafka, RabbitMQ) so services can talk without waiting for each other.
+8. Microservices vs. Monolith: One giant app vs. many small, specialized services.
+9. Content Delivery Networks (CDN): Storing static files (images/video) physically closer to the user.
+10. CAP Theorem: The trade-off between Consistency, Availability, and Partition Tolerance.
+
+Flow:
+Client-> DNS -> CDN -> Load Balancer -> Web Server -> Worker Service, Queue -> Write/Read API -> Memory Cache -> SQL NoSQL.
+
+Outline Use Cases, Constraints and assumptions:
+
+    Who is going to use it?
+    How are they going to use it?
+    How many users are there?
+    What does the system do?
+    What are the inputs and outputs of the system?
+    How much data do we expect to handle?
+    How many requests per second do we expect?
+    What is the expected read to write ratio?
+
