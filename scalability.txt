@@ -1,0 +1,38 @@
+Scalability is the measure of a system’s ability to handle an increasing amount of work—or its potential to be enlarged to accommodate that growth—without sacrificing performance.
+
+## Step 1: Cloning (Golden Rule of scalability):
+- Every server contains exactly the same codebase and does not store any user-related data, like sessions or uploaded images, on local disc or memory. 
+Sessions need to be stored in a centralized data store like database or redis.
+Public servers of a scalable web service are hidden behind a load balancer. 
+This load balancer evenly distributes load (requests from your users) onto your group/cluster of  application servers. 
+All users always get the same results of his request back, independent what server they  “landed on”.
+For deployment, can use Capistrano to make super image clone of codebase and clone them to all servers. AWS calls this AMI - Amazon Machine Image.
+
+## Step 2: Database
+After cloning/horizontal scaling, It can even slow due to the Mysql or databse.
+Path1: Master/Slave Replication (Read from slave, write to master). add more RAM to the master. Now can need sharding, denormalization, SQL tunning which will be expensive
+Path2: Can stay with MySQL, and use it like a NoSQL database, or you can switch to a better and easier to scale NoSQL database like MongoDB or CouchDB.
+
+## Step 3: Cache
+Though we have a scalable databse now, 
+Your users still have to suffer slow page requests when a lot of data is fetched from the database.
+A cache is lightning-fast. It holds every dataset in RAM and requests are handled as fast as technically possible.
+Never do file based cache, can use Redis or memecached. Redis is the best.
+Whenever your application has to read data it should at first try to retrieve the data from your cache.
+Only if it’s not in the cache should it then try to get the data from the main data source.
+
+Pattern 1 (Old and commonly used Way- Cached Database Queries): Whenever you do a query to your database, you store the result dataset in cache.
+                                      A hashed key, whenever run the query first check if cache present.
+                                      Disavantage: hard to delete a cached result when a complex query.
+Pattern 2 (New and Recommended Way- Cached Objects): Let your class assemble a dataset from your database and then store the complete instance of the class or the assembed dataset in the cache. 
+                                                     When your class has finished the “assembling” of the data array, directly store the data array, or better yet the complete instance of the class, in the cache
+                                                     Faster and more logical, makes asynchronous processing possible
+                                                     Exmp: User session, Fully rendered blog article, activity streams, user-friend relationship.
+
+## Step 3: Asynchronism:
+To avoid “please wait a while” - situation, asynchronism needs to be done.
+Just imagine the scalability of your website if the script would upload these pre-rendered HTML pages to AWS S3 or Cloudfront or another Content Delivery Network! Your website would be super responsive and could handle millions of visitors per hour
+Use job queue - task happenning in background, user proceed to the page.
+Constantly checks for new “job is done” - signals, sees that the job was done and informs the user about it.
+A queue of tasks or jobs that a worker can process. 
+If you do something time-consuming, try to do it always asynchronously. 
