@@ -1,5 +1,75 @@
 Scalability is the measure of a system’s ability to handle an increasing amount of work—or its potential to be enlarged to accommodate that growth—without sacrificing performance.
+Scalability is simply being able to handle more requests - weather by buying a bigger machine or byuing more machines.
 
+* Vertical Scaling: Let's say, you have restuarent and one chef who handles so many orders. When orders grow, as a manager,
+you told the chef to work harder- You are optimizing process and increase throughput using one resource- that's called vertical scaling.
+It is the process of increasing the power of a single machine to handle a higher load.
+Instead of adding more servers to your infrastructure, you beef up the existing one by adding more resources like CPU, RAM, or storage.
+Think of it like upgrading your personal laptop: rather than buying a second laptop to run your heavy video editing software, you simply install more RAM or a faster processor into your current machine.
+Low complexity and easy, but high risk when single point of failure.
+
+* Horizontal Scaling: Let's say, the one and only chef got sick, cant make order that day which is single point of failure.
+Now, you hired another chef, as a backup, which is actually master slave approach, one is master chef, backup is slave.
+When business grows, you hired more chef. You are using single type of multiple resources which is horizontal scaling.
+
+* Microsevice Architecture: Let's say you can have order for pizza or burger. So, you made a team of chef who knows aboout pizza and
+another team for burger. Thats the microservice architecture.
+Instead of building one giant "monolith" where every feature (like payments, inventory, and user profiles) is bundled together, you break the app into specialized pieces. Each piece runs its own process and communicates with others through simple, lightweight mechanisms—usually an API (Application Programming Interface).
+
+A monolithic architecture is a single, unified codebase where all components of an application are tightly coupled.
+Monolith can still be horizontally scaled across multiple machines and connect to multiple databases.
+Advantages of monolith: Ideal or small teams can work, simpler to manage, easier depoloyments, less code duplication, faster performace dute to local calls instad of network calls.
+Disadvantages of monolith: High context required for new team members to understand the entire system,
+complicated testing because components are tithtly copuled, a bug in one part can crash the entire system.
+
+Microservices are independent, small business units, each with its own data and functions, communicating via APIs, often through a gateway.
+Advantages: Easier to scale, new developers can quickly contribute, parallel development possible
+Disadvantages: complex to design correctly, potential for inefficient communication, requires a smart architect to design effectively.
+
+Choose as per your application requirements.
+
+Example: Stack overflow is on monolith, youtube facebook is on microservice.
+
+* Dustributed System: What if an electricity leakage or some problem for that shop for a day.
+We can build another backup shop in another location. Thats the distributed system.
+Instead of one giant supercomputer doing all the work, you have a network of machines (nodes) communicating and coordinating with each other to achieve a common goal.
+
+* Load Balancer: Deliver boy or customer will take order from shop a or b.
+They will decide which shop can deliver in the lowest time, and order from that shop. 
+Thats the load balancer. Load Balancer acts as a "traffic cop" sitting in front of your servers. Its job is to route incoming client requests across all servers capable of fulfilling those requests in a way that maximizes speed and capacity utilization.
+Take the requests from server and evenly balance the load on our servers.
+The concept of consistent hashing will help us to do that.
+
+* Consistent Hashing: Consistent hashing is a clever strategy used to distribute data across a cluster of servers in a way that minimizes disruption when nodes are added or removed.
+How it Works:
+
+    The Ring: Imagine a range of integers (e.g., 0 to 232−1) wrapped into a circle.\
+    Placing Servers: Each server is hashed based on its IP or ID and placed at a specific point on this ring.
+    Placing Keys: When a request (key) comes in, it is hashed and placed on the same ring.
+    Finding a Server: To determine which server handles the key, you simply travel clockwise from the key's position until you hit the first server.
+
+In a basic ring, servers might be distributed unevenly, leading to "hot spots" where one server handles way more traffic than others. To fix this, we use Virtual Nodes (VNodes).
+Instead of placing Server A on the ring once, we hash it multiple times (Server A_1, Server A_2, Server A_3) and scatter them across the ring.
+
+* Decoupling: Decoupling is the process of separating different components of a software system so that they can act, fail, and scale independently of one another.
+
+* Logging and Metrics: Keep log record of everything when happenning what happenning.
+And taking those log events we can take decision what should we do- thats metrics.
+Analytics- Auditiong - Reporting - Machine Learning.
+
+* Extensible: Write code efficiently. Delivery boy doesnt need to know what he delivering- pizza or burger.
+Extensibility is the ability of a system to be extended with new functionality without modifying its existing core structure.
+
+** Key Differences between Vertical and Horizontal:
+1. In horizontal, load balancing required, but not in vertical.
+2. In vertical, single point of failure can happen, but not in horizontal.
+3. In vertical, inter process communication which is fast. In horizontal, network communication which is slow.
+4. Vertical is consistent(No atomic lock need), but horizontal is inconsistent.
+5. Horizontal scales well, where vertical not because you have to always increase the machine size.
+In real life, can use both. Start with vertical scaling , means buy machine as bigger as possible.
+When business grows more, consider horizontal scaling.
+
+*** Scaling Steps:
 ## Step 1: Cloning (Golden Rule of scalability):
 - Every server contains exactly the same codebase and does not store any user-related data, like sessions or uploaded images, on local disc or memory. 
 Sessions need to be stored in a centralized data store like database or redis.
@@ -29,13 +99,47 @@ Pattern 2 (New and Recommended Way- Cached Objects): Let your class assemble a d
                                                      Faster and more logical, makes asynchronous processing possible
                                                      Exmp: User session, Fully rendered blog article, activity streams, user-friend relationship.
 
+
+From Gaurav Sen Video:
+Let's say I have database, now one user  queried the database for a pizza price greater than 500. We cached that queried result is cache,
+when another user want same type data we just show it from cache.
+Caching is a fundamental concept in computer science and is essential for large-scale distributed systems. Its main purpose is to reduce latency by minimizing repetitive work through data storage. Caches are generally much faster to access than databases because they are located closer to the system.
+Benefits of Caching:
+
+    Reduces latency: Caching significantly speeds up data retrieval, leading to faster response times.
+    Avoids repeated computations: Instead of re-querying a database for the same information, cached data can be instantly reused.
+    Reduces database load: By serving frequently requested data from the cache, the pressure on the main database is lessened.
+
+Limitations and Drawbacks:
+
+    Costly to host: Storing large amounts of data in memory can be expensive.
+    Limited storage: Caches have finite memory, requiring policies for data removal when full.
+    Thrashing: A poorly optimized cache with a low hit rate can lead to increased latency and wasted memory, as the system constantly removes and loads data that is not frequently accessed.
+    Eventual consistency: Caches often hold an older copy of data, meaning it might not always reflect the absolute latest information from the database. The level of consistency is determined by the chosen policy.
+
+Cache Management and Placement:
+Managing a cache involves addressing two key questions:
+    Update management: How are updates handled between the cache and the database? This is governed by various write policies.
+    Data eviction: What data should be removed from the cache when it reaches its capacity? This is determined by cache replacement policies like Least Recently Used (LRU) and Least Frequently Used (LFU).
+    Let's say we have data 1, 2, 3, 4, 5. cache has memory size 3. We cached 1,2,3. Now when user want 4, we remove least ecently used 1 and place 4 at that place and so on.
+    Cache policy.
+Cache placement depends on the system's requirements and can include:
+    In-memory cache: Stored directly on application servers.
+    Database cache: Built into the database server itself.
+    Global cache: An independent, external cache server accessed via API calls like redis or memecached.
+
+In large-scale distributed systems, a distributed cache is typically preferred because it can scale independently, facilitating easier deployments and shared access across multiple services.
+
 ## Step 3: Asynchronism:
 To avoid “please wait a while” - situation, asynchronism needs to be done.
 Just imagine the scalability of your website if the script would upload these pre-rendered HTML pages to AWS S3 or Cloudfront or another Content Delivery Network! Your website would be super responsive and could handle millions of visitors per hour
 Use job queue - task happenning in background, user proceed to the page.
 Constantly checks for new “job is done” - signals, sees that the job was done and informs the user about it.
 A queue of tasks or jobs that a worker can process. 
-If you do something time-consuming, try to do it always asynchronously.
+If you do something time-consuming, try to do it always asynchronously. 
+A message queue enables a system with multiple "pizza shops" (servers) to handle failures. If one server goes down, orders can be re-routed to other active servers.
+A message queue offers features like persistence, routing, and task management. It encapsulates the complexity of message delivery and event handling.
+There are message queues to handle multiple servers like RabbitMQ, 0MQ, JMS, and Amazon's messaging queues.
 
 *** Performance vs scalability:
 A service is scalable if it results in increased performance in a manner proportional to resources added. 
@@ -49,3 +153,28 @@ Latency is the time to perform some action or to produce some result.
 Throughput is the number of such actions or results per unit of time.
 We need maximal throughput with acceptable latency.
 Exmp- Latency: 8 Hours, Throughput: 120 cars / day or 5 cars / hour.
+
+** Database Sharding:
+Sharding is a method for scaling databases horizontally by partitioning data across multiple servers.
+When a single database can no longer handle the volume of data or requests, sharding distributes the load.
+
+Horizontal Partitioning: This is the core of sharding. It involves breaking data into smaller, manageable pieces (shards) based on a "shard key"
+which is an attribute of the data itself. Each shard is then handled by a separate database server. This differs from vertical partitioning, which uses columns to divide data.
+
+Consistency and Availability: These are crucial for databases. Consistency ensures that what is written to the database can be read back accurately.
+and availability means the database remains operational.
+
+Shard Key Selection: Choosing the right shard key is vital. For example, a user ID or location could be used to distribute data. A good shard key ensures that related data resides in the same shard, improving query performance.
+
+Potential Drawbacks of Sharding:
+Joins across shards: Queries that require joining data from multiple shards can be very expensive and slow due to network latency.
+Inflexible shards:  Initially, shards can be inflexible, making it difficult to add or remove servers dynamically.
+Consistent Hashing: This algorithm helps address shard inflexibility by allowing dynamic scaling of the number of database servers.
+Hierarchical Sharding:  This technique overcomes inflexibility by breaking down large shards into smaller "mini slices" (5:42), managed by a dedicated manager.
+Shard Failure: If a shard fails, its data becomes inaccessible. 
+Master-Slave Architecture: This common solution involves a master database handling write requests and multiple slave databases copying the master for read requests.
+If the master fails, one of the slaves can take over, ensuring fault tolerance.
+Sharding is a complex solution. It is recommended to explore simpler scaling at first such as indexing or using noSQL database which often implement sharding internally.
+Sharding is best reserved for when other optimization methods are insufficient.
+
+

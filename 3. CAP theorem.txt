@@ -1,0 +1,83 @@
+Example: http://ksat.me/a-plain-english-introduction-to-cap-theorem.
+
+## In a distributed system (a collection of interconnected nodes that share data- multiple servers), you can only have two out of the following three guarantees across a write/read pair:
+   Consistency, Availability, Partition Tolerance.
+The CAP Theorem (henceforth 'CAP') says that it is impossible to build an implementation of read-write storage in an asynchronous network that satisfies all of the following three properties.
+
+* Consistency - Every read receives the most recent write or an error.
+In a consistent system, all nodes see the same data at the same time. If you update a piece of data on one node, that update must be instantly reflected across all other nodes before another read occurs.
+* Availability - Every request receives a response, without guarantee that it contains the most recent version of the information.
+* Partition Tolerance - The system continues to operate despite arbitrary partitioning due to network failures.
+A partition is essentially a network break where nodes can't talk to each other.
+The system continues to operate despite an arbitrary number of messages being dropped (or delayed) by the network between nodes.
+Networks aren't reliable, so you'll need to support partition tolerance. You'll need to make a software tradeoff between consistency and availability.
+
+# Read Write Storage:
+CAP specifically concerns itself with a theoretical construct called a register. A register is a data structure with two operations:
+
+    set(X) sets the value of the register to X
+    get() returns the last value set in the register
+
+A key-value store can be modelled as a collection of registers. Even though registers appear very simple, they capture the essence of what many distributed systems want to do - write data and read it back.
+
+# Atomic/Linearizable:
+Atomic, or linearizable, consistency is a guarantee about what values it's ok to return when a client performs get() operations.
+Linearizability is a guarantee that the system behaves as if there were only one single copy of the data, and all operations on it happen instantistically.
+Even if your data is actually spread across 50 servers globally, the user should never be able to tell. If a "Write" finishes at 10:00 AM, any "Read" starting at 10:01 AM must see that new value. There is no "lag" or "eventual" update allowed.
+Example:
+Non-Linearizable: You call Person A and tell them to write "Apples" on page 1. A second later, your friend calls Person E and asks what's on page 1. Person E hasn't received the memo yet and says "Empty." Your friend just saw "stale" data.
+Linearizable (Atomic): When you tell Person A to write "Apples," Person A immediately locks the entire system. They don't hang up the phone with you until they've ensured every other person has written "Apples" in their book. Now, no matter who your friend calls, they will hear "Apples."
+
+# Asynchronous Network:
+An asynchronous network is one in which there is no bound on how long messages may take to be delivered by the network or processed by a machine. The important consequence of this property is that there's no way to distinguish between a machine that has failed, and one whose messages are getting delayed.
+
+# Partition: A partition is when the network fails to deliver some messages to one or more nodes by losing them
+
+## Solutions:
+The CAP theorem tells us that we can't build a database that both responds to every request and returns the results that you would expect every time.
+But it is not a death knell: it does not mean that we cannot build useful systems while working within these constraints.
+CAP only guarantees that there is some circumstance in which a system must give up either C or A. Let's call that circumstance a critical condition.
+
+# CP - consistency and partition tolerance:
+  Waiting for a response from the partitioned node might result in a timeout error. CP is a good choice if your business needs require atomic reads and writes.
+  Use Case: Banking systems, where an accurate balance is more important than the app being temporarily "down."
+  Examples: MongoDB, HBase, Redis.
+
+# AP - availability and partition tolerance:
+Responses return the most readily available version of the data available on any node, which might not be the latest. Writes might take some time to propagate when the partition is resolved.
+Use Case: Social media feeds or "likes." It’s okay if a user sees an old "like" count for a few seconds, as long as the app remains functional.
+Examples: Cassandra, DynamoDB, CouchDB.
+AP is a good choice when the system needs to continue working despite external errors.
+
+The decision between Consistency and Availability is a software trade off. You can choose what to do in the face of a network partition - the control is in your hands. 
+
+## Consistency patterns:
+* Weak Consistency: Weak consistency works well in real time use cases such as VoIP, video chat, and realtime multiplayer games. 
+For example, if you are on a phone call and lose reception for a few seconds, when you regain connection you do not hear what was spoken during connection loss.
+
+* Eventual Consistency: After a write, reads will eventually see it (typically within milliseconds). Data is replicated asynchronously.
+Exmp: DNS, Mail.
+
+* Strong Consistency: After a write, reads will see it. Data is replicated synchronously.
+Exmp: RDBMSes.  Strong consistency works well in systems that need transactions.
+
+
+## Availability Patterns:
+* Fail Over availability pattern:
+  Active Passive/Master Slave Failure: Heartbeats are sent between the active and the passive server on standby. If the heartbeat is interrupted, the passive server takes over the active's IP address and resumes service.
+    The length of downtime is determined by whether the passive server is already running in 'hot' standby or whether it needs to start up from 'cold' standby. Only the active server handles traffic.
+    Only the active server handles traffic.
+  Active-Aactive/Master-Master failure: In active-active, both servers are managing traffic, spreading the load between them.
+Fail-over adds more hardware and additional complexity.
+There is a potential for loss of data if the active system fails before any newly written data can be replicated to the passive.
+
+* Replication Availability Pattern:
+  Master Slave replication, Master Master Replication.
+* Availability in Numbers:
+Availability is often quantified by uptime (or downtime) as a percentage of time the service is available.
+Availability is generally measured in number of 9s--a service with 99.99% availability is described as having four 9s.
+Exmp: Downtime per year- 99.9% availability - three 9s,	downtime per year: 8h 45min 57s, per month, per week, per day.
+
+Overall availability decreases when two components with availability < 100% are in sequence: Availability (Total) = Availability (Foo) * Availability (Bar).
+Overall availability increases when two components with availability < 100% are in parallel: Availability (Total) = 1 - (1 - Availability (Foo)) * (1 - Availability (Bar)).
+
