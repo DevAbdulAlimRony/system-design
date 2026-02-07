@@ -1,0 +1,50 @@
+Imagine you have a website, like "interviewready.io". 
+When someone visits your website, their computer asks a main server for the web page.
+
+A Content Delivery Network (CDN) is like having many mini-servers all over the world, spread out in different countries. 
+Instead of everyone going to one main server, people connect to the mini-server closest to them.
+In system design, a Content Delivery Network (CDN) is a geographically distributed group of servers that work together to provide fast delivery of internet content.
+
+Think of it as a local branch of a massive library; 
+Instead of everyone traveling to the main building (the origin server), they go to the nearest neighborhood branch (the Edge server) to get what they need.
+When a user requests a file (like an image or video), the request is redirected from the origin server to a CDN server that is geographically closest to the user. This reduces latency—the delay between a request and a response.
+
+Key Components
+
+    Origin Server: The "source of truth." It holds the original versions of your content.
+    Edge Servers (PoPs): Points of Presence located at the "edge" of the network, closer to users, where content is cached.
+    Caching: The process of storing copies of files in the Edge servers so they don't have to be fetched from the origin every time.
+
+Why use a CDN?
+
+    Faster website loading: If someone in Japan wants to see your website, they connect to a server in Japan, not one far away in India. This makes your website load much faster. 
+    Studies by Amazon and Google show that faster loading makes people trust your website more.
+    Handle local rules: Some countries have rules about where data can be stored. CDNs help you follow these rules by storing content in the correct country.
+    Show relevant content: You can store content that's popular in one country on the local mini-server, so people in that country see what they like without wasting space on other servers.
+
+    Reduced Latency: Content travels a shorter physical distance, leading to faster load times.
+    Scalability: CDNs handle the "heavy lifting" of traffic, preventing your origin server from crashing during high-traffic spikes.
+    Reliability: If one edge server goes down, the CDN automatically routes traffic to the next closest one.
+    Security: Many CDNs offer protection against DDoS (Distributed Denial of Service) attacks by absorbing the massive traffic across their global network.
+
+Pull CDN:
+The CDN "pulls" content from the origin only when a user requests it for the first time.	
+Sites with frequently changing content or smaller assets.
+
+Push CDN:
+You manually "push" content to the CDN servers before anyone asks for it.
+Large files (videos, installers) or content that rarely changes.
+
+Examples of CDNs:
+
+    Amazon CloudFront is a popular CDN that's cheap, reliable, and easy to use. It works well with other Amazon services.
+    Other big companies like Google (GCP) and Microsoft (Azure) also offer CDN services.
+
+CDNs are usually rented from big companies because it's hard to set up and manage servers all over the world yourself. 
+They are great for delivering static content like videos, images, and other files.
+
+Critical Considerations:
+
+    Cache Invalidation: If you update an image on your origin server, the CDN might still serve the old version until the "Time to Live" (TTL) expires. You may need to manually "purge" the cache.
+    While they save on bandwidth costs at the origin, CDN providers charge based on data transfer.
+    Don't cache everything. Dynamic content (like a user's private profile page or real-time stock prices) usually shouldn't be stored on a CDN, as it changes too quickly and contains sensitive data.

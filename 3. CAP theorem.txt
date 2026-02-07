@@ -1,4 +1,8 @@
 Example: http://ksat.me/a-plain-english-introduction-to-cap-theorem.
+ 
+Let's say we have two ATM's which communicate to each other. They have same copy of amount- that means latest data(consistence) and alwyas available with data.
+But if any failure happen like one ATM broke, or network issue. 
+Then, we can design the system to make the system consistence or available. We cant make both completely consistence and available.
 
 ## In a distributed system (a collection of interconnected nodes that share data- multiple servers), you can only have two out of the following three guarantees across a write/read pair:
    Consistency, Availability, Partition Tolerance.
