@@ -3,6 +3,8 @@ System Design is the process of defining the architecture, components, modules, 
 2. How: ystem design dictates how data flows from point A to point B, whether that’s through synchronous REST calls or asynchronous message queues like Kafka.
 3. The constraints: Scalability(Can it handle more load?), Availability(Is it always online?), Reliability(Does it work correctly under pressure?), Maintainability(Can other engineers fix it later?).
 
+System design focuses on the internal structure and behavior of the system, considering factors such as performance, scalability, reliability, maintainability, and security. It involves making decisions about the system’s components, their interactions, and their relationships to external systems or modules.
+
 Building Blocks:
 1. Database: Relational (SQL) vs Non-Relationsal (No SQL)
 2. Caching

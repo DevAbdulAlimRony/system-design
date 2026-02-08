@@ -1,0 +1,5 @@
+* Load Balancer: Deliver boy or customer will take order from shop a or b.
+They will decide which shop can deliver in the lowest time, and order from that shop. 
+Thats the load balancer. Load Balancer acts as a "traffic cop" sitting in front of your servers. Its job is to route incoming client requests across all servers capable of fulfilling those requests in a way that maximizes speed and capacity utilization.
+Take the requests from server and evenly balance the load on our servers.
+The concept of consistent hashing will help us to do that.

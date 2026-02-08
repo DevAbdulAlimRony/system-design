@@ -1,0 +1,81 @@
+Let's say you can have order for pizza or burger. So, you made a team of chef who knows aboout pizza and
+another team for burger. Thats the microservice architecture.
+Instead of building one giant "monolith" where every feature (like payments, inventory, and user profiles) is bundled together, you break the app into specialized pieces. Each piece runs its own process and communicates with others through simple, lightweight mechanisms—usually an API (Application Programming Interface).
+
+A monolithic architecture is a single, unified codebase where all components of an application are tightly coupled.
+Monolith can still be horizontally scaled across multiple machines and connect to multiple databases.
+Advantages of monolith: Ideal or small teams can work, simpler to manage, easier depoloyments, less code duplication, faster performace dute to local calls instad of network calls.
+Disadvantages of monolith: High context required for new team members to understand the entire system,
+complicated testing because components are tithtly copuled, a bug in one part can crash the entire system.
+
+Microservices are independent, small business units, each with its own data and functions, communicating via APIs, often through a gateway.
+Advantages: Easier to scale, new developers can quickly contribute, parallel development possible
+Disadvantages: complex to design correctly, potential for inefficient communication, requires a smart architect to design effectively.
+
+Choose as per your application requirements.
+
+Example: Stack overflow is on monolith, youtube facebook is on microservice.
+
+# Publisher Subscriber Model:
+Let's say we have a microservice architecture. s1 service connected to s2 and s3. s2 is connected with s4 and s5.
+Now, if s1 updated something and send messages to s2 and s3, problem can happen like s2 got the message but s3 didnt get.
+We can use a message broker between s1 and s2-s3. That message broker will hold the message from s1 and will send to s2 and s3. and so on for s2 to s4 and s5.
+
+The Pub-Sub model offers a more efficient way to handle asynchronous events and loosely couple services.
+
+Key aspects of the Pub-Sub Model:
+
+    Decoupling Services: Services publish messages to a message broker (e.g., Kafka, RabbitMQ) instead of directly sending requests to other services. 
+    This removes direct dependencies, allowing the publisher to be relieved of responsibility once the message is sent.
+    Asynchronous Communication: Messages are "fire and forget," meaning the publisher doesn't wait for a response from the subscriber.
+    The message broker handles persistence and ensures messages are delivered even if a subscriber is temporarily down.
+    Single Point of Failure: While it might seem counterintuitive, moving interaction logic to a message broker consolidates potential failure points, making them easier to manage compared to multiple points of failure in a request-response system.
+    Scalability: New services can easily subscribe to existing message streams without requiring changes to the publishing service.
+
+Advantages of Event Systems (Pub-Sub):
+
+    Loose coupling of services.
+    Easier to add new subscribers and publishers (like we added another service s6 connected to s1's message broker).
+    Centralizes interaction logic.
+    Provides transaction guarantees (at least once delivery) through message persistence.
+    Improved scalability.
+
+Drawbacks of Event Systems (Pub-Sub):
+
+    Not suitable for systems requiring strong consistency of data, such as financial transactions. 
+    Does not inherently guarantee idempotency, meaning developers need to implement logic to handle duplicate messages to prevent unintended repeated actions.
+    Adds an extra layer of interaction, which can slow down services and introduce additional cost for design, learning, and maintenance of message queues.
+
+See gaurav Sen 'System Design' playlist's diagram.
+
+Example Use: Game, Twitter like social media where twit is an event and reactors are subsribers.
+
+# Event Driven System: (See Diagram)
+Event-Driven Architecture (EDA) is a software design pattern where decoupled services communicate by capturing, processing, and responding to "events"—basically, a change in state or an update (like a user clicking "buy" or a sensor detecting heat).
+Services communicate by sending and receiving events rather than direct requests.
+
+Key aspects of Event-Driven Architecture:
+
+    Decoupling: Services don't directly interact, reducing dependencies.
+    Event Bus: A central component where services publish events, and interested subscribers consume them.
+    Local Storage: Each service stores relevant event data in its local database, ensuring availability even if other services go down.
+
+Advantages of EDA:
+
+    Availability: Services can operate independently, even if others fail.
+    Rollback and Debugging: The event log allows replaying events to any point in history, aiding in debugging and understanding past states.
+    Smooth Replacements: New services can easily replace old ones by replaying historical events from the event bus.
+    Transactional Guarantees: Guarantees like "at least once" or "at most once" message delivery, crucial for critical operations like sending invoices.
+    Intent Preservation: Storing events captures the intent behind data changes, allowing for flexible future actions by services.
+
+Disadvantages of EDA:
+
+    Consistency Issues: Maintaining data consistency across all services can be challenging due to asynchronous event processing.
+    Difficulty in Reasoning Flow: It's hard to trace the flow of a request as services independently consume events without direct knowledge of other subscribers.
+    External Service Dependency: Replaying events with external dependencies that rely on real-time responses like email can lead to inconsistent behavior.
+    Complexity in Control: Fine-tuning control over event delivery, such as setting priorities or ensuring specific services consume events, adds complexity.
+    Migration Difficulty: Moving from an event-driven to a request-response architecture can be challenging due to the pervasive nature of events.
+
+Real-world examples of systems using event-driven architecture include Git, React, Node.js, and many gaming systems.
+
+* Event-Driven Microservices Architecture (EDA).

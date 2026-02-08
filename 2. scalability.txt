@@ -12,33 +12,10 @@ Low complexity and easy, but high risk when single point of failure.
 Now, you hired another chef, as a backup, which is actually master slave approach, one is master chef, backup is slave.
 When business grows, you hired more chef. You are using single type of multiple resources which is horizontal scaling.
 
-* Microsevice Architecture: Let's say you can have order for pizza or burger. So, you made a team of chef who knows aboout pizza and
-another team for burger. Thats the microservice architecture.
-Instead of building one giant "monolith" where every feature (like payments, inventory, and user profiles) is bundled together, you break the app into specialized pieces. Each piece runs its own process and communicates with others through simple, lightweight mechanisms—usually an API (Application Programming Interface).
-
-A monolithic architecture is a single, unified codebase where all components of an application are tightly coupled.
-Monolith can still be horizontally scaled across multiple machines and connect to multiple databases.
-Advantages of monolith: Ideal or small teams can work, simpler to manage, easier depoloyments, less code duplication, faster performace dute to local calls instad of network calls.
-Disadvantages of monolith: High context required for new team members to understand the entire system,
-complicated testing because components are tithtly copuled, a bug in one part can crash the entire system.
-
-Microservices are independent, small business units, each with its own data and functions, communicating via APIs, often through a gateway.
-Advantages: Easier to scale, new developers can quickly contribute, parallel development possible
-Disadvantages: complex to design correctly, potential for inefficient communication, requires a smart architect to design effectively.
-
-Choose as per your application requirements.
-
-Example: Stack overflow is on monolith, youtube facebook is on microservice.
 
 * Dustributed System: What if an electricity leakage or some problem for that shop for a day.
 We can build another backup shop in another location. Thats the distributed system.
 Instead of one giant supercomputer doing all the work, you have a network of machines (nodes) communicating and coordinating with each other to achieve a common goal.
-
-* Load Balancer: Deliver boy or customer will take order from shop a or b.
-They will decide which shop can deliver in the lowest time, and order from that shop. 
-Thats the load balancer. Load Balancer acts as a "traffic cop" sitting in front of your servers. Its job is to route incoming client requests across all servers capable of fulfilling those requests in a way that maximizes speed and capacity utilization.
-Take the requests from server and evenly balance the load on our servers.
-The concept of consistent hashing will help us to do that.
 
 * Consistent Hashing: Consistent hashing is a clever strategy used to distribute data across a cluster of servers in a way that minimizes disruption when nodes are added or removed.
 How it Works:

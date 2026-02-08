@@ -1,0 +1,68 @@
+In high-level system design, NoSQL (Not Only SQL) refers to a broad category of database management systems designed to handle diverse data models—like documents, graphs, and key-value pairs—that don't fit into the rigid rows and columns of traditional relational databases (RDBMS).
+
+Move toward NoSQL when your design requirements hit these specific walls:
+A. Extreme Horizontal Scalability:
+   Relational databases are typically "Vertical" (you need a bigger, more expensive server). NoSQL is designed to be "Horizontal" (you just add more cheap servers).
+   When: When your traffic grows from thousands to millions of concurrent users and a single server can no longer handle the load.
+
+B. Schema Flexibility (Unstructured Data)
+   If your data doesn't have a fixed "shape" or changes constantly, a SQL schema (which requires a migration for every change) becomes a bottleneck.
+    When: When you are ingesting data from various third-party APIs, IoT sensors, or user-generated content where the fields vary from one record to the next.
+
+C. High Velocity / Low Latency
+   SQL databases prioritize ACID compliance (guaranteeing every transaction is perfect), which adds overhead. NoSQL often prioritizes speed and availability.
+   When: When it’s more important to show a "Like" count instantly than it is to ensure that count is 100% accurate down to the millisecond.
+
+Adantages:
+* NoSQL stores data as large JSON blobs, making insertions and retrievals efficient for entire records.
+  Example: id, data. In data we will put json for all columns and relations also like {name: '', age: , profile: {}, }
+* It offers flexible schema, allowing for easy addition of new attributes without expensive operations. No need to add another column in table what SQL(RDBMS) does.
+* NoSQL databases are built for horizontal partitioning and are optimized for aggregations like maximum age.
+
+Disadvatntages:
+* Updation problem, Lack of inherent consistency (ACID properties), making them unsuitable for financial transactions.
+* They are not read-optimized for specific column queries and lack implicit relations, making joins difficult 
+
+The Four Major Types of NoSQL:
+1. Document (e.g., MongoDB)	General purpose, content management, user profiles.	Storing a blog post with varying tags, comments, and metadata.
+2. Key-Value (e.g., Redis)	Caching, session management, real-time leaderboards. Remembering that a user is logged in as they click through a site.
+3. Wide-Column (e.g., Cassandra) Massive datasets, time-series data, high-write volume.	Storing billions of logs or sensor readings from smart devices.
+4. Graph (e.g., Neo4j)	Social networks, fraud detection, recommendation engines. Mapping "Friends of Friends" or finding patterns in money laundering.
+
+. Real-Life Use Cases & Who Uses Them
+Netflix: Personalization & Availability
+Netflix uses Cassandra for its high availability. When you're watching a show, the system needs to save your progress constantly. They can't afford for the database to go down, and since users are spread globally, they need a database that replicates data across different regions effortlessly.
+
+Uber: Dynamic Data
+Uber uses a variety of NoSQL stores (like Schemaless, built on MySQL/NoSQL principles) to handle the massive influx of GPS coordinates and trip data. Since trip details can change (different cities have different tax laws or vehicle types), a flexible schema is mandatory.
+
+Amazon: The "Shopping Cart" Problem
+Amazon created DynamoDB because during peak times (Prime Day), a relational database couldn't scale fast enough to handle every single person adding items to their carts. They needed a system that would never "lock" a table, ensuring the "Buy" button always works.
+
+LinkedIn: The Social Graph
+To show you "2nd-degree connections," a SQL database would have to perform massive, slow "JOIN" operations. LinkedIn uses graph-based logic to navigate these relationships instantly.
+
+* Using Mysql and Nosql together:
+In a polyglot architecture, your application doesn't talk to one giant database. Instead, different components or services talk to the database that suits their data structure.
+Real-World Scenario: An E-commerce Platform
+
+If you were designing a platform like Amazon, you wouldn't pick just one. You would use both based on the "demand" of the specific feature:
+Use SQL for: The "Source of Truth"
+
+    Feature: User Accounts, Orders, and Financial Transactions.
+    Why: You need ACID compliance. If a user buys an item, you must ensure the money is deducted AND the inventory is updated at the same exact time. You cannot have "eventual consistency" here—it must be perfect.
+    Database: PostgreSQL or MySQL.
+
+Use NoSQL for: The "High Scale" Features
+
+    Feature: Product Catalog & Search.
+    Why: Different products have different attributes (a Laptop has RAM; a T-shirt has Size). NoSQL handles this flexible schema easily.
+    Database: MongoDB or Elasticsearch.
+
+Use NoSQL for: The "Speed" Features
+
+    Feature: Shopping Cart & Session Management.
+    Why: These are high-frequency, temporary bits of data. You need sub-millisecond latency so the site feels snappy.
+    Database: Redis (Key-Value NoSQL).
+
+When a change happens in your SQL database, it can emit an event that updates the NoSQL database using event driven architecture.

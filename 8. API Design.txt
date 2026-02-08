@@ -1,0 +1,61 @@
+We should know what is a good api and what is a dirty api.
+
+An API (Application Programming Interface) is a documented contract that defines how external users can interact with a piece of code.
+It specifies the API name, parameters, response, and potential errors, similar to a function definition in programming.
+
+Example: To find all administrators in a WhatsApp group, WhatsApp exposes an API like GetAdmins.
+
+    API Name: GetAdmins
+    Parameter: groupID (a string)
+    Errors: groupID does not exist or group is deleted
+    Response: A list of Admin objects (e.g., JSON with name, user ID)
+
+Best Practices for API Design:
+
+    1. Location and Naming: APIs should belong to the service that handles their specific functionality. 
+       For example, a GetAdmins API belongs to a group service. 
+       Naming should be precise; if GetAdmins returns more than just admins, its name is misleading.
+
+    2. Parameters: Only include necessary parameters. While additional parameters can optimize performance by reducing external queries, this should be considered carefully, 
+                   and the API name might need to change.
+
+    3. Response Objects: Avoid stuffing too much information into a response to avoid future changes. 
+                         This leads to more network traffic and confusion.
+
+    4. Error Definition: Define expected errors for your API, like "group does not exist" or "group is deleted". 
+                         Avoid being too generic like just a 404 or defining too many unnecessary errors like string length check, string type check when already typed parameter etc.
+    
+    5. HTTP Endpoints: For HTTP APIs, define the URL structure, including the API name and versioning (e.g., /v1/getAdmins). 
+                       HTTP methods like GET and POST should align with the API's action.
+                       GET vs. POST: A GET request can be used if the API is for fetching information and doesn't have a large request payload. 
+                       Avoid mixing routing information with action in the URL path.
+
+    6. Side Effects: A good API should have no side effects, meaning it performs only the stated action. 
+                     If SetAdmins also adds members or creates groups if already not present, it's doing too much. 
+                     Breaking such APIs into multiple, single-purpose APIs improves clarity, testability, and atomicity (Atom).
+                     Atomicity is the "all or nothing" principle. It guarantees that a transaction composed of multiple steps is treated as a single, indivisible unit.
+
+    7. Pagination and Fragmentation: For large responses, break them into smaller pieces using pagination (client-controlled offset and limit) or fragmentation (server-controlled breaking into multiple packets).
+    
+    8. Data Consistency: When fetching groupAdmins, another group admin added- data is not consistent anymore. 
+                         Consider the required level of data consistency. 
+                         Perfect consistency can slow down APIs. Caching can improve performance but might return slightly older data. 
+                         API design should balance consistency, load, and response size.
+
+    9. Statelessness: The server shouldn't store your previous "session" data. This makes it easier to scale horizontally because any server can handle any request.
+    10. Versioning: Systems evolve. Always version your API (e.g., /v1/users vs /v2/users) so you don't break existing apps when you make changes.
+
+Depending on the system's needs, you’ll choose a specific "language" for your API:
+
+    REST (Representational State Transfer): The industry standard for web services. It uses standard HTTP methods (GET, POST, PUT, DELETE) and is stateless, meaning each request contains all the information needed to process it.
+    GraphQL: Developed by Meta, it allows clients to request exactly the data they need and nothing more. This prevents "over-fetching" (getting too much data) or "under-fetching" (not getting enough).
+    gRPC: A high-performance framework often used for internal microservices communication. It uses Protocol Buffers (binary data) instead of JSON, making it incredibly fast.
+    WebSockets: Used for real-time, bi-directional communication (like chat apps or live sports scores).
+
+Security and Resilience:
+In system design, an API isn't just about data; it’s about protection.
+
+    Authentication/Authorization: Ensuring the user is who they say they are (OAuth2, JWT).
+    Rate Limiting: Preventing a single user from crashing your system by sending too many requests.
+    Throttling: Slowing down requests when the system is under heavy load to maintain stability.
+    API Gateway: A single entry point that handles security, logging, and routing for all your microservices.

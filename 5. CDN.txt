@@ -1,6 +1,9 @@
 Imagine you have a website, like "interviewready.io". 
 When someone visits your website, their computer asks a main server for the web page.
 
+A content delivery network or content distribution network (CDN) is a globally distributed network of proxy servers, serving content from locations closer to the user.
+Generally, static files such as HTML/CSS/JS, photos, and videos are served from CDN, although some CDNs such as Amazon's CloudFront support dynamic content. The site's DNS resolution will tell clients which server to contact.
+
 A Content Delivery Network (CDN) is like having many mini-servers all over the world, spread out in different countries. 
 Instead of everyone going to one main server, people connect to the mini-server closest to them.
 In system design, a Content Delivery Network (CDN) is a geographically distributed group of servers that work together to provide fast delivery of internet content.
@@ -9,13 +12,13 @@ Think of it as a local branch of a massive library;
 Instead of everyone traveling to the main building (the origin server), they go to the nearest neighborhood branch (the Edge server) to get what they need.
 When a user requests a file (like an image or video), the request is redirected from the origin server to a CDN server that is geographically closest to the user. This reduces latency—the delay between a request and a response.
 
-Key Components
+# Key Components
 
     Origin Server: The "source of truth." It holds the original versions of your content.
     Edge Servers (PoPs): Points of Presence located at the "edge" of the network, closer to users, where content is cached.
     Caching: The process of storing copies of files in the Edge servers so they don't have to be fetched from the origin every time.
 
-Why use a CDN?
+# Why use a CDN?
 
     Faster website loading: If someone in Japan wants to see your website, they connect to a server in Japan, not one far away in India. This makes your website load much faster. 
     Studies by Amazon and Google show that faster loading makes people trust your website more.
@@ -27,15 +30,17 @@ Why use a CDN?
     Reliability: If one edge server goes down, the CDN automatically routes traffic to the next closest one.
     Security: Many CDNs offer protection against DDoS (Distributed Denial of Service) attacks by absorbing the massive traffic across their global network.
 
-Pull CDN:
+# Pull CDN:
 The CDN "pulls" content from the origin only when a user requests it for the first time.	
 Sites with frequently changing content or smaller assets.
+A time-to-live (TTL) determines how long content is cached. Pull CDNs minimize storage space on the CDN, but can create redundant traffic if files expire and are pulled before they have actually changed.
 
-Push CDN:
+# Push CDN:
 You manually "push" content to the CDN servers before anyone asks for it.
 Large files (videos, installers) or content that rarely changes.
+Sites with a small amount of traffic or sites with content that isn't often updated work well with push CDNs. Content is placed on the CDNs once, instead of being re-pulled at regular intervals.
 
-Examples of CDNs:
+# Examples of CDNs:
 
     Amazon CloudFront is a popular CDN that's cheap, reliable, and easy to use. It works well with other Amazon services.
     Other big companies like Google (GCP) and Microsoft (Azure) also offer CDN services.
@@ -43,8 +48,17 @@ Examples of CDNs:
 CDNs are usually rented from big companies because it's hard to set up and manage servers all over the world yourself. 
 They are great for delivering static content like videos, images, and other files.
 
-Critical Considerations:
+# Critical Considerations:
 
     Cache Invalidation: If you update an image on your origin server, the CDN might still serve the old version until the "Time to Live" (TTL) expires. You may need to manually "purge" the cache.
     While they save on bandwidth costs at the origin, CDN providers charge based on data transfer.
     Don't cache everything. Dynamic content (like a user's private profile page or real-time stock prices) usually shouldn't be stored on a CDN, as it changes too quickly and contains sensitive data.
+
+
+# Disadvantages:
+    CDN costs could be significant depending on traffic, although this should be weighed with additional costs you would incur not using a CDN.
+    Content might be stale if it is updated before the TTL expires it.
+    CDNs require changing URLs for static content to point to the CDN.
+
+
+# Diagram: https://github.com/donnemartin/system-design-primer/blob/master/images/h9TAuGI.jpg
