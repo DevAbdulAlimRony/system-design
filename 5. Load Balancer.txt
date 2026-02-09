@@ -1,5 +1,63 @@
-* Load Balancer: Deliver boy or customer will take order from shop a or b.
+# Load Balancer: Deliver boy or customer will take order from shop a or b.
 They will decide which shop can deliver in the lowest time, and order from that shop. 
-Thats the load balancer. Load Balancer acts as a "traffic cop" sitting in front of your servers. Its job is to route incoming client requests across all servers capable of fulfilling those requests in a way that maximizes speed and capacity utilization.
+Thats the load balancer. Load Balancer acts as a "traffic cop" sitting in front of your servers. 
+Its job is to route incoming client requests across all servers capable of fulfilling those requests in a way that maximizes speed and capacity utilization.
 Take the requests from server and evenly balance the load on our servers.
 The concept of consistent hashing will help us to do that.
+
+* Load balancers distribute incoming client requests to computing resources such as application servers and databases.
+Effective at preventing requests from going to unhealthy servers, halping to eliminate a single point of failure.
+
+* Load balancers can be implemented with hardware (expensive) or with software such as HAProxy.
+To protect against failures, it's common to set up multiple load balancers, either in active-passive or active-active mode.
+Load balancer can routes based on session cooki or random or round robin or layer4 or 7 etc.
+
+# Single Point of Failure:
+If earth ends, human ends- so earth is the single point of failure for human. 
+To avoid a single point of failure (SPOF) in distributed systems. A SPOF is any part of a system whose failure can bring down the entire system.
+Adding More Nodes (Replication): The easiest way to address a SPOF is to add more nodes or instances of a service
+For databases, this means creating replicas, often in a master/slave architecture, where changes are mirrored to backup databases.
+This significantly reduces the probability of failure.
+For services, simply adding a backup node isn't always useful if it's not actively handling requests. Instead, multiple active nodes improve resilience.
+Load balancers distribute requests across multiple servers. However, the load balancer itself can become a SPOF, necessitating multiple load balancers.
+DNS (Domain Name System) can provide multiple IP addresses for a single hostname, allowing clients to connect to any available load balancer.
+Multiple Regions: To protect against large-scale disasters like natural calamities, it's essential to distribute the system across multiple geographic regions.
+
+# Layer 4 load balancers look at info at the transport layer to decide how to distribute requests.
+This involves the source, destination IP addresses, and ports in the header, but not the contents of the packet.
+Layer 7 load balancers look at the application layer to decide how to distribute requests.
+This can involve contents of the header, message, and cookies. 
+
+# Disadvantages:
+1. Can become a performance bottleneck if it does not have enough resources or if it is not configured properly.
+2. A single load balancer is a single point of failure, configuring multiple load balancers further increases complexity.
+
+# Proxy:
+1. Forward Proxy (The Client’s Shield)
+A standard Forward Proxy sits in front of the clients. 
+When you make a request to the internet, the proxy intercepts it, hides your identity, and sends it to the web on your behalf.
+
+    Who it represents: The Client.
+    Key Uses:
+        Anonymity: The destination server sees the proxy's IP address, not yours.
+        Content Filtering: Organizations (like schools or offices) use them to block specific websites.
+        Caching: It can store local copies of common websites to speed up browsing for everyone on the network.
+
+2. Reverse Proxy (The Server’s Shield)
+A Reverse Proxy sits in front of one or more web servers. 
+When a request comes in from the internet, the reverse proxy intercepts it and decides which internal server should handle it. 
+The client usually has no idea they are talking to a proxy; they think they are talking directly to the website.
+
+    Who it represents: The Server(s).
+    Key Uses:
+        Load Balancing: It distributes incoming traffic across multiple servers so no single server gets overwhelmed.
+        Security: It hides the existence and characteristics of the origin servers. It can also act as a firewall against DDoS attacks.
+        SSL Termination: It handles the heavy lifting of decrypting HTTPS requests, freeing up the web servers to focus on processing data. Removes the need to install X.509 certificates on each server.
+        Caching: It can store static content (like images) to serve them faster to users without hitting the main database.
+        Compression - Compress server responses.
+        Static content - Serve static content directly.
+
+If we are building a system that needs to scale, you must use a Reverse Proxy. It allows you to add or remove servers from your fleet without the user ever noticing a change in the URL.
+Solutions such as NGINX and HAProxy can support both layer 7 reverse proxying and load balancing.
+Disadvantage: A single reverse proxy is a single point of failure, configuring multiple reverse proxies (ie a failover) further increases complexity.
+

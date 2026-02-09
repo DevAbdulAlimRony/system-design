@@ -153,14 +153,3 @@ Master-Slave Architecture: This common solution involves a master database handl
 If the master fails, one of the slaves can take over, ensuring fault tolerance.
 Sharding is a complex solution. It is recommended to explore simpler scaling at first such as indexing or using noSQL database which often implement sharding internally.
 Sharding is best reserved for when other optimization methods are insufficient.
-
-# Single Point of Failure:
-If earth ends, human ends- so earth is the single point of failure for human. 
-To avoid a single point of failure (SPOF) in distributed systems. A SPOF is any part of a system whose failure can bring down the entire system.
-Adding More Nodes (Replication): The easiest way to address a SPOF is to add more nodes or instances of a service
-For databases, this means creating replicas, often in a master/slave architecture, where changes are mirrored to backup databases.
-This significantly reduces the probability of failure.
-For services, simply adding a backup node isn't always useful if it's not actively handling requests. Instead, multiple active nodes improve resilience.
-Load balancers distribute requests across multiple servers. However, the load balancer itself can become a SPOF, necessitating multiple load balancers.
-DNS (Domain Name System) can provide multiple IP addresses for a single hostname, allowing clients to connect to any available load balancer.
-Multiple Regions: To protect against large-scale disasters like natural calamities, it's essential to distribute the system across multiple geographic regions.

@@ -36,7 +36,8 @@ Best Practices for API Design:
                      Atomicity is the "all or nothing" principle. It guarantees that a transaction composed of multiple steps is treated as a single, indivisible unit.
 
     7. Pagination and Fragmentation: For large responses, break them into smaller pieces using pagination (client-controlled offset and limit) or fragmentation (server-controlled breaking into multiple packets).
-    
+       Let's say respose's size is greater tahn 4kb, break that response into multiple segment.
+       
     8. Data Consistency: When fetching groupAdmins, another group admin added- data is not consistent anymore. 
                          Consider the required level of data consistency. 
                          Perfect consistency can slow down APIs. Caching can improve performance but might return slightly older data. 
