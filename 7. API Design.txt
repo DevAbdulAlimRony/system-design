@@ -60,3 +60,132 @@ In system design, an API isn't just about data; it’s about protection.
     Rate Limiting: Preventing a single user from crashing your system by sending too many requests.
     Throttling: Slowing down requests when the system is under heavy load to maintain stability.
     API Gateway: A single entry point that handles security, logging, and routing for all your microservices.
+
+Don't return 200 OK for everything. Use the right tool for the job:
+
+    201 Created: After a successful POST.
+    204 No Content: After a successful DELETE.
+    422 Unprocessable Entity: For validation errors.
+    404 Not Found: When the resource doesn't exist.
+
+The HTTP method tells us the action; the URL tells us the object.
+
+    Bad: POST /api/v1/createNewUser
+    Good: POST /api/v1/users.
+
+** Application Progremming Interface defines how software components should interact with each other.
+- Its a contract that defines what requests can be made, how to make them, what response to expect.
+- Abstraction Mechanism: Hides implementation details while exposing funnctionality.
+- Service Boundaries: Define clear interfaces between system components.
+
+- Core API STyles: Rest, GraphQL, gPRC.
+
+* REST API stands for Representational State Transfer Application Programming Interface. 
+- Rest use resource-based(like users/2, users is the resource here) approach by using the HTTP methods as a protocol.
+- Rest is stateless, each request cpntains all of the information needed to procees it.
+- Rest uses the standardized methods like POST, PUT, DELTE, PATCH.
+- Mostly used for web and mobile api.
+- Can have multiple requests for related data.
+- Fixed response structure.
+- Explicit versioning- v1, v2.
+- Built in Http caching.
+
+- GraphQL is a query language that allows clients to request exactly what they need.
+- It comes with a single endpoint for all of the operations and we can choose what we exect to recieve from this API.
+- Operations are query for read, mutation whenever we write data, subscription for real time.
+- Useful for complex UIs.
+- Single request for precise data.
+- Client specific response structure.
+- Schema evolution without versioning.
+- Application level caching.
+
+- gRPC use protocol buffers, binary serializaton with schema definition.
+- Service definition- methods defined as RPCs in .proto files.
+- Communication types- unary, server streaming, client straeming, bidirectional streaming.
+- High performance.
+- Good for microservices.
+
+* The 4 key design principles to create API:
+1. Consistency: consistent naming (if camel case then camel case everywhere, dont mix), consistent patterns.
+2. Simplicity: Focus on core use cases, intutive design- dont make complex for other developers.
+3. Security: Authentication, Authorization, Input Validation, Rate Limiting.
+4. Performance: Caching strategies, pagination, minimize payloads, reduce round trips- dont make multiple end points for getting same data.
+
+* Design Approaches:
+1. Top-down: Start with high level requirements and workflows.
+2. Bottom-up: Begin with existing data models and capabilities.
+3. Contract-first: Define the API contract before implementation (what should be request and what should be response)
+
+* Protocols in Application Layer: HTTP/HTTPS (Reuqest from the client and Response to the server), Websockets, AMQP (Advanced Message Queueing Protocol)- for asynchronous communication, gRPC (Google Remote Procedure Call)
+- Protocol Choice: HTTP for restful and graphql, websockets for real time apis, gprc for microservices.
+- HTTP have status code- 2xx(success), 3xx(Redirection), 4xx(Client side error), 5xx(server error), 200. Common Headers- Content-Type, Authorization, Accept, Cache-Control, User-Agent.
+- HTTPS: HTTP+TLS/SSL Encryption- The core difference is that HTTPS encrypts the data sent between the client and the server using TLS/SSL, whereas HTTP sends data in plain text, making it vulnerable to interception.
+- HTTPS has SEO benefits.
+- Websocket advantages: Real time data, reduced bandwidth usage, bidirectional communication.
+
+* Core Components of AMQP
+The protocol operates on a model known as the AMQP Model, which consists of three main parts:
+    Exchange: The entry point for messages. When a producer sends a message, it goes to an exchange first. The exchange is responsible for routing the message based on specific rules (Routing Keys).
+    Queue: The storage area for messages. Messages stay here until they are safely processed by a consumer.
+    Binding: The "link" or rule that connects an exchange to a queue. It tells the exchange: "If a message meets these criteria, send it to this specific queue."
+How it Works (The Workflow)
+    Publishing: A producer sends a message to an Exchange.
+    Routing: The Exchange looks at the Routing Key and its Bindings to decide which Queue(s) should receive the message.
+    Buffering: The Queue stores the message.
+    Consuming: A consumer pulls (or is pushed) the message from the queue and processes it.
+    Acknowledgement (Ack): The consumer sends a signal back to the queue confirming the message was handled, allowing the queue to safely delete it
+
+* Transport layer: TCP, UPD. and all other layers.
+- TCP (Transmission Control protocol): Guranteed delivery, connection-based(3-way handshake), ordered packets, error checking. Slow but reliable.
+- UDP (User datagram protocol): No delivery gurantee, connectionless- no handshake, faster transmission, less overhead. Faster but unreliable.
+- UDP is good for video calls, online games or live streams. Because if one packet faled, you dont need to find that packed again, just move on and shw next packet when connection came.
+
+* Network Layer: IP (V4/6), Data Link Layer (Ethernet, Wifi, Bluetooth), Physical Layer.
+- To design API, we just need to learn application and transport layer.
+
+* Design clean RESTful APIs:
+- Resource Modeling: If Business Domain is Product then REST resource will be products.
+- Resources should be clearly identifyable by URL patterns: api/v1/products/product/1.
+- Filtering with query parameters: /products?category= book&stock=true.
+- Sorting using query parameters: /products?sort=price_asc.
+- Pagination: /products?page=2&limit=3. some uses offset instead of page.
+- Filtering, sorting, pagination should be in backend api, not in frontend, frontend ill just make requests.
+- Status code and error handling.
+- Version your APIs.
+
+* Designing GraphQL APIs:
+- Schema design and type system:
+  type User {
+    id: ID!
+    name: String!
+    posts: [Post!]!
+  }
+- Queries and Mutations:
+  type Query {
+    user (id: ID!): User
+  }
+  type Mutation {
+    createUser (name: String!): User
+  }
+- Error Handling: Rather than status code, specify:
+{"datra": {"user": null}, "errors": [{"statusCode": 404, "message": "", "path": ["user"]}]}
+- Keep schemas smaller
+- Avoid deeply nested queries, implement query depth limits.
+- Use meaningful naming.
+
+* Authentication:
+- Basic authentication: username + password. very rarely used.
+- Barer Token Authentication: Standard in API design, fast and stateless.
+- OAuth2 + JWTs Authentication: Stateless, dont need to store sessions.
+- Access vs Refresh Tokens: Refresh tokens should generally be stored erver-side for security reasons.
+- When access token expires, refersh token gets a new one behind the scenes. User dont have to login again and your system stays secure.
+- SSO + Identity Protocols.
+
+* Authorization: What user can do.
+- RBAC (Role based access control)
+- ABAC (Attribute based access control)
+- ACL (Access Control List)
+
+- Security: rate Limiting, CORS, Query Injection, Firewalls, VPNS, CSRF, XSS.
+
+

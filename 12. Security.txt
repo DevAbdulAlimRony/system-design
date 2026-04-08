@@ -1,0 +1,7 @@
+##
+    Encrypt in transit and at rest. In Transit (or "In Motion") means the data is currently traveling across the internet—for example, from a user's browser to your Laravel API. Exmp: User's NID number or password.
+    Sanitize all user inputs or any input parameters exposed to user to prevent XSS and SQL injection.
+    Use parameterized queries to prevent SQL injection.
+    Use the principle of least privilege.
+
+##

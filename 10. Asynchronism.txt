@@ -1,0 +1,58 @@
+Asynchronous workflows help reduce request times for expensive operations that would otherwise be performed in-line.
+Message queues receive, hold, and deliver messages.
+If an operation is too slow:
+
+    An application publishes a job to the queue, then notifies the user of job status
+    A worker picks up the job from the queue, processes it, then signals the job is complete
+
+The user is not blocked and the job is processed in the background. 
+For example, if posting a tweet, the tweet could be instantly posted to your timeline, but it could take some time before your tweet is actually delivered to all of your followers.
+
+Redis is useful as a simple message broker but messages can be lost.
+RabbitMQ is popular but requires you to adapt to the 'AMQP' protocol and manage your own nodes.
+Amazon SQS is hosted but can have high latency and has the possibility of messages being delivered twice.
+
+# Tasks queues: receive tasks and their related data, runs them, then delivers their results. 
+They can support scheduling and can be used to run computationally-intensive jobs in the background.
+
+# Back Pressure: 
+If queues start to grow significantly, the queue size can become larger than memory, resulting in cache misses, disk reads, and even slower performance.
+Back pressure can help by limiting the queue size, thereby maintaining a high throughput rate and good response times for jobs already in the queue. 
+Clients can retry the request at a later time, perhaps with exponential backoff.
+
+Disadvantage: Use cases such as inexpensive calculations and realtime workflows might be better suited for synchronous operations, as introducing queues can add delays and complexity.
+
+# A Cron Job is a scheduled task that runs automatically at specific time intervals on a server.
+If you want your server to delete old log files every day at midnight, you would set up a Cron Job.
+Use Task Scheduling (Cron) for recurring things: "Send a weekly report every Monday."
+Use Queues for immediate heavy lifting: "A user just uploaded a 50MB image; resize it in the background so the user doesn't have to wait."
+
+# Message queue: a general-purpose transport for discrete messages between producers and consumers. Focus: reliable delivery, ordering, routing, buffering, and decoupling of components.
+
+# Task queue: a higher-level pattern that schedules, distributes, and manages units of work (tasks) to be executed, often with retries, result tracking, and worker orchestration. Focus: execution semantics and lifecycle of work.
+ 
+Relationship: task queue built on message queue
+
+    A task queue typically uses a message broker underneath to transport tasks from producers (app code) to consumers (workers). The broker provides the reliable, concurrent, cross-process delivery primitives the task system needs.
+    Example mapping: Producer enqueues a serialized task into the broker → broker stores/delivers message → worker dequeues, deserializes, executes, then optionally writes result back (to broker or a results store).
+
+Why a task queue requires a message broker (RabbitMQ, Redis, IronMQ, etc.)
+
+    Reliability and durability: brokers persist messages to disk or memory with replication, so submitted tasks aren’t lost if the producer or worker crashes.
+    Delivery semantics and concurrency: brokers implement delivery guarantees (acknowledgements, requeueing, visibility timeouts) and allow many workers to compete for tasks safely.
+    Scalability and decoupling: brokers enable multiple producers and many distributed workers to scale independently across processes or machines without bespoke networking code.
+    Routing and patterns: brokers support queues, topics, routing keys, exchanges, priority queues and delayed delivery — features task systems use for scheduling, load balancing, and routing tasks to appropriate worker types.
+    Backpressure and flow control: brokers buffer tasks when workers are slow and let producers continue, preventing synchronous blocking or dropped work.
+    Simplicity and reuse: integrating an existing broker avoids reimplementing durable messaging, consensus, persistence, and client libraries across languages.
+
+Why not implement a task queue without a broker?
+
+    You can implement in-process scheduling or simple DB-backed job tables, but drawbacks include weaker delivery guarantees, more complex locking/coordination, limited scale, and reinventing features brokers already provide.
+    Databases or object stores can act as brokers for small or specific use cases (e.g., using Redis lists or an RDBMS job table), but they become brokers in practice and require careful handling of visibility/timeouts, contention, and performance.
+
+Concrete examples
+
+    Celery + RabbitMQ/Redis: Celery is the task system (serialization, retries, scheduling). RabbitMQ/Redis are brokers that handle message delivery, routing, and worker coordination.
+    RDBMS-backed task queue: enqueue tasks in a jobs table, workers poll and atomically claim rows. Works for low throughput but needs careful locking and provides less flexibility than a message broker.
+    Serverless/managed: Cloud task services (AWS SQS + Lambda, Google Cloud Tasks) combine broker-like delivery with execution endpoints so the broker is managed for you.
+

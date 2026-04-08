@@ -1,0 +1,50 @@
+OSI7 Layer Model: https://github.com/donnemartin/system-design-primer/blob/master/images/5KeocQs.jpg
+
+# HTTP:
+HTTP is a method for encoding and transporting data between a client and a server. It is a request/response protocol:
+Clients issue requests and servers issue responses with relevant content and completion status info about the request. 
+HTTP is self-contained, allowing requests and responses to flow through many intermediate routers and servers that perform load balancing, caching, encryption, and compression.
+
+HTTP is an application layer protocol relying on lower-level protocols such as TCP and UDP.
+
+HTTP is an application-layer protocol that runs over TCP.
+
+Difference of HTTp and TCP:
+The network stack is the physical layer. This is where electrical signals or light pulses or radio waves actually transmit information from place to place. 
+The physical layer doesn't really have protocols, but instead has standards for voltages, frequencies, and other physical properties.
+You can transmit information directly this way, but you need a lot of power or a dedicated line, and without higher layers you won't be able to share bandwidth.
+The next layer up is the link layer. This layer covers communication with devices that share a physical communications medium.
+Here, protocols like Ethernet, 802.11a/b/g/n, and Token Ring specify how to handle multiple concurrent accesses to the physical medium and how to direct traffic to one device instead of another. In a typical home network, this is how your computer talks to your home "router."
+The third layer is the network layer. In the majority of cases, this is dominated by Internet Protocol (IP). 
+This is where the magic of the Internet happens, and you get to talk to a computer halfway around the world, without needing to know where it is.
+Routers handle directing your traffic from your local network to the network where the other computer lives, where its own link layer handles getting the packets to the right computer.
+We can talk to a computer somewhere around the world, but that computer is running lots of different programs. How should it know which one to deliver your message to?
+The transport layer takes care of this, usually with port numbers. The two most popular transport layer protocols are TCP and UDP.
+TCP does a lot of interesting things to smooth over the rough spots of network-layer packet-switched communication like reordering packets, retransmitting lost packets, etc. UDP is more unreliable, but has less overhead.
+So we've connected your browser to the web server software on the other end, but how does the server know what page you want? 
+These are things that application-layer protocols handle. For web traffic, this is the HyperText Transfer Protocol (HTTP). 
+There are thousands of application-layer protocols: SMTP, IMAP, and POP3 for email; XMPP, IRC, ICQ for chat; Telnet, SSH, RDP for remote administration; etc.
+hese are the five layers of the TCP/IP networking model 
+The OSI model has 7 layers. In reality, some protocols shim between various layers, or can work 
+at multiple layers at once. TLS/SSL for instance provides encryption and session information between the network and transport layers. Above the application layer, Application Programming Interfaces (APIs) govern communication with web applications like Quora, Twitter, and Facebook.
+
+# Difference between PUT and Patch.
+
+# Use UDP over TCP when:
+
+    You need the lowest latency
+    Late data is worse than loss of data
+    You want to implement your own error correctio
+
+# Representational state transfer (REST):
+REST is an architectural style enforcing a client/server model where the client acts on a set of resources managed by the server. 
+The server provides a representation of resources and actions that can either manipulate or get a new representation of resources. All communication must be stateless and cacheable.
+
+There are four qualities of a RESTful interface:
+
+    Identify resources (URI in HTTP) - use the same URI regardless of any operation.
+    Change with representations (Verbs in HTTP) - use verbs, headers, and body.
+    Self-descriptive error message (status response in HTTP) - Use status codes, don't reinvent the wheel.
+    HATEOAS (HTML interface for HTTP) - your web service should be fully accessible in a browser.
+
+# Why use REST over RPC? (Interview Question can be)
